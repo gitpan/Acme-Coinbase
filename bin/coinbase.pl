@@ -15,11 +15,12 @@ my $prog = basename($0);
 my $verbose;
 my $auth = Acme::Coinbase::DefaultAuth->new();
 my $nonce = time();
-my $config_file = $ENV{HOME} . "/.acmecoinbase.ini";
+my $config_file;# = $ENV{HOME} . "/.acmecoinbase.ini";
+my $use_curl = 0;
 
 # Usage() : returns usage information
 sub Usage {
-    "$prog [--verbose] [--config=CONF.ini]\n";
+    "$prog [--verbose] [--use-curl] [--config=CONF.ini]\n";
 }
 
 # call main()
@@ -30,19 +31,28 @@ sub main {
     GetOptions(
         "verbose!" => \$verbose,
         "config-file=s" => \$config_file,
+        "use-curl" => \$use_curl,
+        "nonce=n" => \$nonce,
     ) or die Usage();
-    #$SIG{__WARN__} = sub { Carp::confess $_[0] };
-    #$SIG{__DIE__} = sub { Carp::confess $_[0] };
+    $SIG{__WARN__} = sub { Carp::confess $_[0] };
+    $SIG{__DIE__} = sub { Carp::confess $_[0] };
 
     #print "$prog: NONCE: $nonce\n";
     my $base = "https://api.coinbase.com/api";
     my $url  = "$base/v1/account/balance";
 
-    my $config = Acme::Coinbase::Config->new( config_file => $config_file );
-    $config->read_config();
+    my $default_config_file = $ENV{HOME} . "/.acmecoinbase.ini";
+    if (!$config_file && -e $default_config_file) {
+        $config_file = $default_config_file;
+    }
+    my $config = Acme::Coinbase::Config->new( );
+    if ($config_file && -e $config_file) {
+        $config->config_file($config_file);
+        $config->read_config();
+    }
     my $api_key    = $config->get_param("default", "api_key")    || $auth->api_key(); 
     my $api_secret = $config->get_param("default", "api_secret") || $auth->api_secret();
-    print "$prog: using API key $api_key\n";
+    #print "$prog: using API key $api_key\n";
 
     perform_request( $url, $api_key, $api_secret, $verbose );
 }
@@ -50,9 +60,11 @@ sub main {
 
 sub perform_request {
     my ( $url, $api_key, $api_secret, $verbose ) = @_;
-    if (0) {
-        # USE CURL TO DO BASIC REQUEST
-        my $sig  = hmac_sha256_hex($nonce . $url, $api_secret); # this is wrong
+    if ($use_curl) {
+        # use curl to do basic request
+        my $sig  = hmac_sha256_hex($nonce . $url . "", $api_secret); 
+            # somehow this is different than what we get from non-curl
+        print "$prog: in callback, str=$nonce$url, ACCESS_SIGNATURE => $sig\n";
         my $curl = "curl";
         if ($verbose) { $curl .= " --verbose"; }
         my $cmd = "$curl " . 
@@ -80,22 +92,21 @@ sub perform_request {
                 my($request, $ua, $h) = @_; 
                 my $content = $request->decoded_content();  # empty string.
                 $content = "" unless defined($content);
-                my $sig = hmac_sha256_hex( $nonce . $url . $content, $api_secret ); # this conforms to spec but is wrong. won't validate
-                #print "$prog: in callback, setting header ACCESS_SIGNATURE => $sig\n";
+
+                my $to_hmac = $nonce . $url . $content;
+                my $sig = hmac_sha256_hex( $to_hmac, $api_secret ); 
+                print "$prog: in callback, str=$to_hmac, ACCESS_SIGNATURE => $sig\n";
                 $request->headers->push_header( ACCESS_SIGNATURE => $sig );
             }
         );
 
         # a handler to dump out the request for debugging
-        #$ua->add_handler( request_send => sub { shift->dump; return });
+        $ua->add_handler( request_send => sub { shift->dump; return });
 
         my $response = $ua->get( $url );
 
-        if ($response->is_success) {
-            print( "$prog: Success: " . $response->decoded_content );  # or whatever
-        } else {
-            die ("$prog: Error: " . $response->status_line . ", content: " . $response->decoded_content);
-        }
+        my $noun = $response->is_success() ? "Success" : "Error";
+        print ("$prog: $noun " . $response->status_line . ", content: " . $response->decoded_content . "\n");
     }
 }
 

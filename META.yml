@@ -1,7 +1,7 @@
 ---
 abstract: 'Simple Coinbase API Test'
 author:
-  - 'joshr <joshr-cpan@joshr.com>'
+  - 'joshr <joshr>'
 build_requires: {}
 configure_requires:
   ExtUtils::MakeMaker: '0'
@@ -12,4 +12,4 @@ meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: '1.4'
 name: Acme-Coinbase
-version: '0.001'
+version: '0.002'

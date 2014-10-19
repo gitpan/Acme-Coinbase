@@ -11,23 +11,20 @@ use ExtUtils::MakeMaker ;
 
 my %WriteMakefileArgs = (
   "ABSTRACT" => "Simple Coinbase API Test",
-  "AUTHOR" => "joshr <joshr-cpan\@joshr.com>",
+  "AUTHOR" => "joshr <joshr>",
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0
   },
   "DISTNAME" => "Acme-Coinbase",
   "EXE_FILES" => [
-    "bin/coinbase.pl",
-    "bin/CVS/Repository",
-    "bin/CVS/Entries",
-    "bin/CVS/Root"
+    "bin/coinbase.pl"
   ],
   "LICENSE" => "perl",
   "NAME" => "Acme::Coinbase",
   "PREREQ_PM" => {},
-  "VERSION" => "0.001",
+  "VERSION" => "0.002",
   "test" => {
-    "TESTS" => ""
+    "TESTS" => "t/*.t"
   }
 );
 

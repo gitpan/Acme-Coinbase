@@ -25,6 +25,7 @@ sub read_config {
 }
 sub get_param {
     my ($self, $section, $param) = @_;
+    return "" unless($self->config_reader) ;
     return $self->config_reader->val( $section, $param ) || "";
 }
 
@@ -39,4 +40,56 @@ sub dump {
 #has 'api_key'    => (is => 'rw', isa => 'Str', default=>"lmnop");
 #has 'api_secret'  => (is => 'rw', isa => 'Str', default=>"qwerty");
 
+#############################################
+# we expect a config file, if used, to look like:
+#  [default]
+#  api_key    = keyasdakjb34234kj
+#  api_secret = secretk3j4204h554j2h3409u34bn
+#############################################
+
 1;
+
+=head1 NAME
+
+Acme::Coinbase::Config -- read a acmecoinbase config file
+
+=head1 SYNOPSIS
+
+Example of a usage goes here, such as
+
+    my $conf = new Acme::Coinbase::Config( config_file=>$filename);
+    my $conf->read_config();
+    my $val = $conf->get_param( "section", "param" );
+
+=head1 DESCRIPTION
+
+Manages reading a config file.
+
+=head1 METHODS
+
+=over 4
+
+=item my $conf = Acme::Coinbase::Config->new( );
+
+returns a new object.  
+
+=item conf->read_config()
+
+reads the config file
+
+=item conf->get_param( "section", "param")
+
+reads the given parameter from the given section. 
+
+=back
+
+=head1 COPYRIGHT
+
+Copyright (c) 2014 Josh Rabinowitz, All Rights Reserved.
+
+=head1 AUTHORS
+
+Josh Rabinowitz
+
+=cut    
+
