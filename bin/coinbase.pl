@@ -141,7 +141,7 @@ coinbase.pl
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 SYNOPSIS
 
@@ -167,16 +167,22 @@ coinbase.pl -- Tests checking a balance using the coinbase api
 
 Overall view of the options
 
+    coinbase.pl [-verbose] [--use-curl] [--nonce=NONCE] [--config=CONF.ini]
+
 =over 4
 
 =item --config=/dif/coinbase.ini
 
 Set path to an acmecoinbase.ini file. 
-File is expected to have contents like:
+The will default to ~/.acmecoinbase.ini
+
+This file is expected to have contents like:
 
     [default]
-    api_key    = 1234567abcdefgYZ
-    api_secret = ZZZ111BBB222CCC333DDD444EEE555ZZ
+    api_key    = 123456apikeyfgYZ
+    api_secret = ZZZ111apisecret333DDD444EEE555ZZ
+
+For now, the [default] part is mandatory.
 
 =item --verbose/--noverbose
 
@@ -184,22 +190,14 @@ Turns on/off verbose mode. (off by default)
 
 =item --use-curl
 
-Use curl instead of perl LWP libraries.
+Use curl instead of perl LWP libraries, for test purposes.
 
 =item --nonce=NUMBER
 
-Hard code the nonce to a particular number. Useful for testing. 
+Hard code the nonce to a particular number. For testing. 
 (Techically this is supposed to 'always increase')
 
 =back
-
-=head1 TO DO
-
-If you want such a section.
-
-=head1 BUGS
-
-None
 
 =head1 COPYRIGHT
 
