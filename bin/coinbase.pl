@@ -20,7 +20,7 @@ my $use_curl = 0;
 
 # Usage() : returns usage information
 sub Usage {
-    "$prog [--verbose] [--use-curl] [--config=CONF.ini]\n";
+    "$prog [--verbose] [--use-curl] [--nonce=NONCE] [--config=CONF.ini]\n";
 }
 
 # call main()
@@ -100,8 +100,15 @@ sub perform_request {
             }
         );
 
-        # a handler to dump out the request for debugging
-        $ua->add_handler( request_send => sub { shift->dump; return });
+        if ($verbose) {
+            # a handler to dump out the request for debugging
+            $ua->add_handler( request_send => sub { 
+                    print "$prog: verbose mode: BEGIN dump of request object: ***********\n";
+                    shift->dump; 
+                    print "$prog: verbose mode: END dump of request object: *************\n";
+                    return 
+                });
+        }
 
         my $response = $ua->get( $url );
 
