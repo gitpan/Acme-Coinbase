@@ -1,5 +1,7 @@
 #!/usr/bin/perl -w 
 # vim: set ts=4 sw=4 expandtab showmatch
+# PODNAME: coinbase.pl 
+# above is for POD::Weaver
 
 use strict;
 use Getopt::Long; 
@@ -117,13 +119,105 @@ sub perform_request {
     }
 }
 
-__END__
-GET /api/v1/account/balance HTTP/1.1
-Accept: */*
-User-Agent: Ruby
-ACCESS_KEY: <YOUR-API-KEY>
-ACCESS_SIGNATURE: <YOUR-COMPUTED-SIGNATURE>
-ACCESS_NONCE: <YOUR-UPDATED-NONCE>
-Connection: close
-Host: coinbase.com
+# this is an example of a header used on the coinbase API, from their docs;
+# GET /api/v1/account/balance HTTP/1.1
+# Accept: */*
+# User-Agent: Ruby
+# ACCESS_KEY: <YOUR-API-KEY>
+# ACCESS_SIGNATURE: <YOUR-COMPUTED-SIGNATURE>
+# ACCESS_NONCE: <YOUR-UPDATED-NONCE>
+# Connection: close
+# Host: coinbase.com
 
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+coinbase.pl 
+
+=head1 VERSION
+
+version 0.005
+
+=head1 SYNOPSIS
+
+The synopsis, showing one or more typical command-line usages.
+
+      perl -Ilib bin/coinbase.pl
+
+or
+
+      perl -Ilib bin/coinbase.pl --use-curl
+
+both with and without curl the script outputs some debug info
+
+=head1 DESCRIPTION
+
+Tests checking a balance using the coinbase api
+
+=head1 NAME
+
+coinbase.pl -- Tests checking a balance using the coinbase api
+
+=head1 OPTIONS
+
+Overall view of the options
+
+=over 4
+
+=item --config=/dif/coinbase.ini
+
+Set path to an acmecoinbase.ini file. 
+File is expected to have contents like:
+
+    [default]
+    api_key    = 1234567abcdefgYZ
+    api_secret = ZZZ111BBB222CCC333DDD444EEE555ZZ
+
+=item --verbose/--noverbose
+
+Turns on/off verbose mode. (off by default)
+
+=item --use-curl
+
+Use curl instead of perl LWP libraries.
+
+=item --nonce=NUMBER
+
+Hard code the nonce to a particular number. Useful for testing. 
+(Techically this is supposed to 'always increase')
+
+=back
+
+=head1 TO DO
+
+If you want such a section.
+
+=head1 BUGS
+
+None
+
+=head1 COPYRIGHT
+
+Copyright (c) 2014 Josh Rabinowitz, All Rights Reserved.
+
+=head1 AUTHORS
+
+Josh Rabinowitz
+
+=head1 AUTHOR
+
+joshr <joshr>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2014 by joshr.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

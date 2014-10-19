@@ -6,9 +6,19 @@ package Acme::Coinbase;
 
 1;
 
+__END__
+
+=pod
+
+=encoding UTF-8
+
 =head1 NAME
 
-Acme::Coinbase -- Test coinbase client
+Acme::Coinbase - Simple Coinbase API Test
+
+=head1 VERSION
+
+version 0.005
 
 =head1 SYNOPSIS
 
@@ -17,6 +27,10 @@ Example of a usage goes here, such as...
 =head1 DESCRIPTION
 
 What the object does.
+
+=head1 NAME
+
+Acme::Coinbase -- Test coinbase client
 
 =head1 METHODS
 
@@ -28,5 +42,15 @@ Copyright (c) 2014 Josh Rabinowitz, All Rights Reserved.
 
 Josh Rabinowitz
 
-=cut    
+=head1 AUTHOR
 
+joshr <joshr>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2014 by joshr.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
