@@ -12,11 +12,14 @@ use Digest::SHA qw(hmac_sha256_hex);
 use LWP::UserAgent;
 use Data::Dumper;
 use Carp;
+use Time::HiRes;
+use bignum;
 
 my $prog = basename($0);
 my $verbose;
 my $auth = Acme::Coinbase::DefaultAuth->new();
-my $nonce = time();
+#my $nonce = time();
+my $nonce = Time::HiRes::time() * 1E6;
 my $config_file;# = $ENV{HOME} . "/.acmecoinbase.ini";
 my $use_curl = 0;
 
@@ -39,8 +42,9 @@ sub main {
     $SIG{__WARN__} = sub { Carp::confess $_[0] };
     $SIG{__DIE__} = sub { Carp::confess $_[0] };
 
-    #print "$prog: NONCE: $nonce\n";
-    my $base = "https://api.coinbase.com/api";
+    print "$prog: NONCE: $nonce\n";
+    my $base = "https://api.coinbase.com/api"; 
+    #my $base = "https://api.coinbase.com";
     my $url  = "$base/v1/account/balance";
 
     my $default_config_file = $ENV{HOME} . "/.acmecoinbase.ini";
@@ -75,6 +79,8 @@ sub perform_request {
                     " -H 'ACCESS_KEY: $api_key' " . 
                     " -H 'ACCESS_NONCE: $nonce' " .
                     " -H 'ACCESS_SIGNATURE: $sig' " .
+                    " -H 'Connection: close' " . 
+                    " -H 'Content-Type: application/json' " . 
                     " $url";
         print "$cmd\n";
         system( $cmd );
@@ -86,6 +92,8 @@ sub perform_request {
         $ua->default_headers->push_header( ACCESS_KEY   => $api_key );
         $ua->default_headers->push_header( ACCESS_NONCE => $nonce );
         $ua->default_headers->push_header( Host         => "coinbase.com" );
+        $ua->default_headers->push_header( Connection   => "close" );
+        $ua->default_headers->push_header( "Content-Type" => "application/json" );
 
         # add ACCESS_SIGNATURE in a request_prepare handler so we can set it knowing the request content
         # ... it doesn't matter for GETs though because the content should be blank (like we see in our code)
@@ -115,7 +123,8 @@ sub perform_request {
         my $response = $ua->get( $url );
 
         my $noun = $response->is_success() ? "Success" : "Error";
-        print ("$prog: $noun " . $response->status_line . ", content: " . $response->decoded_content . "\n");
+        #print ("$prog: $noun " . $response->status_line . ", content: " . $response->decoded_content . "\n");
+        print ("$prog: $noun " . $response->status_line . ", content: " . $response->content . "\n");
     }
 }
 
@@ -141,7 +150,7 @@ coinbase.pl
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 SYNOPSIS
 
